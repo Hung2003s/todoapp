@@ -63,6 +63,8 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
           );
         });
       }
+
+      _dobController.text = selectedDate.toString();
     }
   }
 

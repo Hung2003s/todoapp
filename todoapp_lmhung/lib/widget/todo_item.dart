@@ -118,7 +118,10 @@ class _TodoItemState extends State<TodoItem> {
                         ),),
                       ),
                     ],
-                    onChanged: (newValue) {},
+                    onChanged: (newValue) {
+                      setState(() {
+                      });
+                    },
                   ),
                 ),
               ],

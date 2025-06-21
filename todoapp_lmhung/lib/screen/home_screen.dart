@@ -23,13 +23,14 @@ class _HomeScreenState extends State<HomeScreen> {
     'Đã hoàn thành',
     'Bị hủy',
   ];
-  late int selectedindex = 0;
+   int selectedindex = 0;
+   Status filterStatus = Status.Todo;
   void _showcancledialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          content: Text('Bạn chưa chọn động vật để xóa'),
+          content: Text('Bạn chưa chọn task để xóa'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -93,28 +94,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late String type = "Tất cả công việc";
 
-  void _filterTodo(int index) {
-    setState(() {
-      selectedindex = index;
-    });
-    switch (selectedindex) {
-      case 0:
-        type = "Tất cả công việc";
-        break;
-      case 1:
-        type = "Chưa thực hiện";
-        break;
-      case 2:
-        type = "Đang thực hiện";
-        break;
-      case 3:
-        type = "Đã hoàn thành";
-        break;
-      case 4:
-        type = "Bị hủy";
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,74 +125,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Text("Số lượng công việc còn lại: ${listTodo.length}"),
+            child: Text("Số lượng công việc: ${listTodo.length}"),
           ),
-          Expanded(
-            // height: MediaQuery.of(context).size.height,
-            // padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: listTodo.length,
-                itemBuilder: (context, index) {
-                  final isSelected = _selectedTodo.contains(listTodo[index].id);
-                  print('phan tu thu ${index} cua list: ${listTodo[index].id}');
-                  return Row(
-                    children: [
-                      _isSelectionMode
-                          ? Checkbox(
-                            value: isSelected,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                if (value == true) {
-                                  _selectedTodo.add(listTodo[index].id);
-                                } else {
-                                  _selectedTodo.remove(listTodo[index].id);
-                                }
-                              });
-                            },
-                          )
-                          : Container(),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () async {
-                            await Navigator.push<Todo?>(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (_) => AddEditTodoScreen(
-                                      todo: listTodo[index],
-                                    ),
-                              ),
-                            ).then((value) {
-                              setState(() {});
-                            });
-
-                            // final todo = await Navigator.push<Todo?>(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder:
-                            //         (_) => AddEditTodoScreen(
-                            //           todo: listTodo[index],
-                            //         ),
-                            //   ),
-                            // );
-                            // setState(() {
-                            //   listTodo[index]= todo!;
-                            // });
-                            //  print("todo.toString() = ${todo.toString()}");
-                            //  print("listtodo = ${listTodo[index].toString()}");
-                          },
-                          child: TodoItem(todo: listTodo[index]),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
+          _BuildListTodo(context, selectedindex),
           SizedBox(height: 40),
         ],
       ),
@@ -327,6 +241,82 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ],
+      ),
+    );
+  }
+
+  Widget _BuildListTodo(BuildContext context, int index) {
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: listTodo.length,
+          itemBuilder: (context, index) {
+            final isSelected = _selectedTodo.contains(listTodo[index].id);
+            print('phan tu thu ${index} cua list: ${listTodo[index].id}');
+
+            bool shouldshow = selectedindex == 0
+            ? true : selectedindex == 1
+            ? listTodo[index].status == Status.Todo
+                : selectedindex == 2
+                ? listTodo[index].status == Status.Ongoing
+                : selectedindex == 3
+            ? listTodo[index].status == Status.Finish
+                : selectedindex == 4
+            ? listTodo[index].status == Status.Canceled : false;
+            if(!shouldshow) return Container();
+            return Row(
+              children: [
+                _isSelectionMode
+                    ? Checkbox(
+                      value: isSelected,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          if (value == true) {
+                            _selectedTodo.add(listTodo[index].id);
+                          } else {
+                            _selectedTodo.remove(listTodo[index].id);
+                          }
+                        });
+                      },
+                    )
+                    : Container(),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () async {
+                      await Navigator.push<Todo?>(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => AddEditTodoScreen(todo: listTodo[index]),
+                        ),
+                      ).then((value) {
+                        setState(() {});
+                      });
+
+                      // final todo = await Navigator.push<Todo?>(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder:
+                      //         (_) => AddEditTodoScreen(
+                      //           todo: listTodo[index],
+                      //         ),
+                      //   ),
+                      // );
+                      // setState(() {
+                      //   listTodo[index]= todo!;
+                      // });
+                      //  print("todo.toString() = ${todo.toString()}");
+                      //  print("listtodo = ${listTodo[index].toString()}");
+                    },
+                    child: TodoItem(todo: listTodo[index]),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

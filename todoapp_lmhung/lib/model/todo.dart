@@ -6,7 +6,7 @@ class Todo {
   final int id;
   final String title;
   final String description;
-  final Status status;
+  late final Status status;
   final DateTime deadline;
   final DateTime creatAt;
   Priority? priority;
