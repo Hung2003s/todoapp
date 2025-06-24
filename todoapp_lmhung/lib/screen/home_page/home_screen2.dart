@@ -4,16 +4,16 @@ import 'package:todoapp_lmhung/screen/add_edit_todo_screen.dart';
 import 'package:todoapp_lmhung/widget/todo_filter.dart';
 import 'package:todoapp_lmhung/widget/todo_item.dart';
 
-import '../model/todo.dart';
+import '../../model/todo.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HomeScreen2 extends StatefulWidget {
+  const HomeScreen2({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen2> createState() => _HomeScreen2State();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreen2State extends State<HomeScreen2> {
   bool _isSelectionMode = false;
   final Set<int> _selectedTodo = {};
   final List<String> _categories = [
@@ -310,7 +310,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       //  print("todo.toString() = ${todo.toString()}");
                       //  print("listtodo = ${listTodo[index].toString()}");
                     },
-                    child: TodoItem(todo: listTodo[index]),
+                    child: TodoItem(
+                      todo: listTodo[index], 
+                      color: Color(0xff000000),
+                      onchange:() {
+
+                      },
+                    ),
                   ),
                 ),
               ],

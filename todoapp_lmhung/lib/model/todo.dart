@@ -26,11 +26,12 @@ class Todo {
     String? description,
     DateTime? deadline,
     Priority? priority,
+    Status? status
   }) {
     return Todo(
       title: title ?? this.title,
       description: description ?? this.description,
-      status: status,
+      status: status ?? this.status,
       deadline: deadline ?? this.deadline,
       creatAt: creatAt,
       priority: priority ?? this.priority,
