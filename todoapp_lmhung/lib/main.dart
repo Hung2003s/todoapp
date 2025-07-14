@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:todoapp_lmhung/router/router.dart';
-import 'package:todoapp_lmhung/screen/home_page/homepage_choosetheme.dart';
-import 'package:todoapp_lmhung/screen/home_page/home_screen2.dart';
-import 'package:todoapp_lmhung/router/router.dart';
+
 import 'app_bloc/bloc.dart';
 
 void main() {

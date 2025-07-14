@@ -1,46 +1,59 @@
-enum Status { Todo, Ongoing, Finish, Canceled }
 
 enum Priority { high, nomal, low }
 
 class Todo {
   final int id;
-  final String title;
-  final String description;
-  late final Status status;
+  final String parent_id;
+  final String category_id;
+  final String maintask;
+
+  late final bool? status;
   final DateTime deadline;
   final DateTime creatAt;
   Priority? priority;
 
-  Todo({
+  Todo( {
     required this.id,
-    required this.title,
-    required this.description,
+    required this.maintask,
+
     required this.status,
     required this.deadline,
     required this.creatAt,
     this.priority,
+    required this.category_id,
+    required this.parent_id,
   });
 
   Todo copyWith({
-    String? title,
+    String? maintask,
     String? description,
     DateTime? deadline,
     Priority? priority,
-    Status? status
+    bool? status
   }) {
     return Todo(
-      title: title ?? this.title,
-      description: description ?? this.description,
+      maintask: maintask ?? this.maintask,
       status: status ?? this.status,
       deadline: deadline ?? this.deadline,
       creatAt: creatAt,
       priority: priority ?? this.priority,
       id: id,
+      category_id: '',
+      parent_id: this.parent_id,
     );
   }
 
   @override
   String toString() {
-    return "Todo($id, $title)";
+    return "Todo($id, $maintask)";
   }
 }
+
+List<DateTime> daysInRange(DateTime first, DateTime last) {
+  final dayCount = last.difference(first).inDays + 1;
+  return List.generate(
+    dayCount,
+        (index) => DateTime.utc(first.year, first.month, first.day + index),
+  );
+}
+

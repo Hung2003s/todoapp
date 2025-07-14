@@ -2,7 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:todoapp_lmhung/screen/add_edit_todo_screen.dart';
 import 'package:todoapp_lmhung/screen/admin_dashboard/admin_dashboard.dart';
 import 'package:todoapp_lmhung/screen/home_page/homepage_choosetheme.dart';
-import 'package:todoapp_lmhung/screen/home_page/home_screen2.dart';
+
 
 class AppRouter {
   static String intro = "intro";

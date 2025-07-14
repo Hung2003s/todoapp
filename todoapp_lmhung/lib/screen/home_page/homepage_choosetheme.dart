@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todoapp_lmhung/app_bloc/bloc.dart';
 import 'package:todoapp_lmhung/app_bloc/event.dart';
-import 'package:todoapp_lmhung/router/router.dart';
+
 
 import '../../app_bloc/state.dart';
 
@@ -22,7 +22,6 @@ class _HomepageChoosethemeState extends State<HomepageChoosetheme> {
     Color(0xff1877F2),
   ];
   int selectedindex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

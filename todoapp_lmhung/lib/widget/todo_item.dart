@@ -1,15 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todoapp_lmhung/app_bloc/bloc.dart';
+import 'package:todoapp_lmhung/app_bloc/event.dart';
 
+import '../app_bloc/state.dart';
 import '../model/todo.dart';
 
 class TodoItem extends StatefulWidget {
-
+  final List<Todo> listitem;
   final Todo todo;
   final Color color;
-  final Function onchange;
-
-  const TodoItem({super.key, required this.todo, required this.color, required this.onchange});
+  const TodoItem({
+    super.key,
+    required this.todo,
+    required this.color,
+    required this.listitem,
+  });
 
   @override
   State<TodoItem> createState() => _TodoItemState();
@@ -17,6 +24,10 @@ class TodoItem extends StatefulWidget {
 
 class _TodoItemState extends State<TodoItem> {
   late String formattedDateTime;
+
+  bool? isChecked = false;
+
+  late bool isdone = false;
 
   @override
   void initState() {
@@ -41,196 +52,194 @@ class _TodoItemState extends State<TodoItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Color(0xff0F163A).withValues(alpha: 0.1),
-            spreadRadius: 0,
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            height: 36,
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              color: widget.color,
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(8),
-                topLeft: Radius.circular(8),
+    return BlocBuilder<App_Bloc, AppState>(
+      builder: (context, state) {
+        return Container(
+          margin: EdgeInsets.only(bottom: 10),
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Color(0xff0F163A).withValues(alpha: 0.1),
+                spreadRadius: 0,
+                blurRadius: 10,
+                offset: Offset(0, 4),
               ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: Text(
-                    widget.todo.title,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Container(
+                height: 36,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  color: widget.color.withValues(alpha: widget.todo.status == true ? 0.6 : 1),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(8),
+                    topLeft: Radius.circular(8),
                   ),
                 ),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(8),
-                bottomRight: Radius.circular(8),
-              ),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.only(left: 16),
-                  child: Row(
-                    children: [
-                      Text(
-                        widget.todo.description,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: Text(
+                        widget.todo.maintask,
                         style: TextStyle(
-                          fontSize: 16,
+                          color: Colors.white,
                           fontWeight: FontWeight.w500,
-                          color: Color(0xff333333),
+                          fontSize: 14,
+                          decoration:
+                          widget.todo.status == true
+                                  ? TextDecoration.lineThrough
+                                  : TextDecoration.none,
                         ),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 4, vertical: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(8),
+                    bottomRight: Radius.circular(8),
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16),
-                  height: 1,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xffE0E5ED), width: 1),
-                  ),
-                ),
-                SizedBox(height: 8),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                child: Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(left: 16),
+                      child: Row(
                         children: [
-                          Text(
-                            'Mức độ ưu tiên: ${widget.todo.priority == Priority.high
-                                ? 'Cao'
-                                : widget.todo.priority == Priority.nomal
-                                ? 'Trung bình'
-                                : 'Thấp'}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
-                              color: Color(0xff767E8C),
-                            ),
-                          ),
-                          Text(
-                            'Ngày tạo: ' + convertime(widget.todo.creatAt),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
-                              color: Color(0xff767E8C),
-                            ),
-                          ),
-                          Text(
-                            'Deadline: ' + convertime(widget.todo.deadline),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
-                              color: Color(0xff767E8C),
-                            ),
-                          ),
+                          // widget.todo.parent_id != '' ?
+                          // Container() :
+                          Expanded(
+                            flex: 1,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: widget.listitem.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return widget.listitem[index].parent_id ==
+                                        widget.todo.id.toString()
+                                    ? Row(
+                                      children: [
+                                        Container(
+                                          child: Checkbox(
+                                            shape: CircleBorder(),
+                                            value: widget.todo.status == true ? widget.todo.status  :widget.listitem[index].status,
+                                            onChanged: (_) {
+                                                context.read<App_Bloc>().add(
+                                                  ToggleTask(widget.listitem[index].id),
+                                                  // widget.listitem[index].status =
+                                                  //     newvalue;
+                                                );
+                                               print('${widget.listitem[index].status} : ${widget.listitem[index].id}');
+                                            },
+                                          ),
+                                        ),
+                                        Text(
+                                          widget.listitem[index].maintask,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xff333333),
+                                            decoration:
 
+                                            widget.listitem[index].status == true || widget.todo.status == true
+                                                    ? TextDecoration.lineThrough
+                                                    : TextDecoration.none,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                    : Container();
+                              },
+                            ),
+                          ),
                         ],
                       ),
-                      SizedBox(
-                        height: 30,
-                        width: 150,
-                        child: DropdownButtonFormField<Status>(
-                          value: widget.todo.status,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide.none,
-                            ),
-                            filled: true,
-                            fillColor: Color(0xff463b3b),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 5.0,
-                              vertical: 5.0,
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 16),
+                      height: 1,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Color(0xffE0E5ED), width: 1),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Mức độ ưu tiên: ${widget.todo.priority == Priority.high
+                                    ? 'Cao'
+                                    : widget.todo.priority == Priority.nomal
+                                    ? 'Trung bình'
+                                    : 'Thấp'}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: Color(0xff767E8C),
+                                  decoration:
+                                  widget.todo.status == true
+                                          ? TextDecoration.lineThrough
+                                          : TextDecoration.none,
+                                ),
+                              ),
+                              Text(
+                                'Deadline: ' + convertime(widget.todo.deadline),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: Color(0xff767E8C),
+                                  decoration:
+                                      widget.todo.status == true
+                                          ? TextDecoration.lineThrough
+                                          : TextDecoration.none,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            child: Checkbox(
+                              shape: CircleBorder(),
+                              value: widget.todo.status,
+                              onChanged: (_) {
+                                context.read<App_Bloc>().add(
+                                  ToggleTask(widget.todo.id),
+                                  // widget.listitem[index].status =
+                                  //     newvalue;
+                                  //
+                                );
+                                for(int i = 0 ; i < widget.listitem.length; i++) {
+                                  if (widget.listitem[i].id == widget.todo.id) {
+                                    context.read<App_Bloc>().add(
+                                        SetTaskTrue(widget.listitem[i].id));
+                                  }
+                                }
+
+                              },
                             ),
                           ),
-                          icon: const Icon(Icons.arrow_drop_down),
-                          items: const [
-                            DropdownMenuItem(
-                              value: Status.Todo,
-                              child: Text(
-                                'Chưa thực hiện',
-                                style: TextStyle(
-                                  color: Color(0xff6962c9),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            DropdownMenuItem(
-                              value: Status.Ongoing,
-                              child: Text(
-                                'Đang thực hiện',
-                                style: TextStyle(
-                                  color: Color(0xfff6d236),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            DropdownMenuItem(
-                              value: Status.Finish,
-                              child: Text(
-                                'Đã hoàn thành',
-                                style: TextStyle(
-                                  color: Color(0xff50f636),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            DropdownMenuItem(
-                              value: Status.Canceled,
-                              child: Text(
-                                'Bị hủy',
-                                style: TextStyle(
-                                  color: Color(0xff36f6f6),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                          onChanged: (newValues) => widget.onchange ,
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

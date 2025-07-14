@@ -27,8 +27,8 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
   void initState() {
     super.initState();
     if (widget.todo != null) {
-      _titleController.text = widget.todo!.title;
-      _contentController.text = widget.todo!.description;
+      _titleController.text = widget.todo!.maintask;
+      //_contentController.text = widget.todo!.subtask;
       _dobController.text = widget.todo!.deadline.toString();
       _selectedPriority = widget.todo!.priority;
       selectedDate = widget.todo!.deadline;
@@ -73,7 +73,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
       for(int i = 0 ; i < listTodo.length; i ++) {
         if(listTodo[i].id == widget.todo?.id) {
           listTodo[i] = widget.todo!.copyWith(
-            title: _titleController.text,
+            //title: _titleController.text,
             description: _contentController.text,
             deadline: selectedDate,
             priority: _selectedPriority,
@@ -83,12 +83,14 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
     } else {
       Todo todo = Todo(
         id: idGenerator(),
-        title: _titleController.text,
-        description: _contentController.text,
-        status: Status.Todo,
+        maintask: _titleController.text,
+        //subtask: _contentController.text,
+        status: true,
         deadline: selectedDate,
         creatAt: DateTime.now(),
         priority: _selectedPriority,
+        parent_id: '',
+        category_id: '',
       );
       // setState(() {
       listTodo.add(todo);
@@ -99,7 +101,9 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Thêm Task Mới'), actions: []),
+      appBar: AppBar(title:
+      widget.todo != null ? Text('Chỉnh sửa nhiệm vụ') :
+      const Text('Thêm nhiệm vụ mới'), actions: []),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(

@@ -21,14 +21,21 @@ final class LoadTodoData extends AppEvent {
   @override
   // TODO: implement props
   List<Object?> get props => [todo];
-
-
 }
-final class SetTodoStatusEvent extends AppEvent {
-  final Status setStatus;
-  SetTodoStatusEvent(this.setStatus);
+final class ToggleTask extends AppEvent {
+  final int id;
+  ToggleTask( this.id, );
 
   @override
   // TODO: implement props
-  List<Object?> get props => [setStatus];
+  List<Object?> get props => [id];
 }
+final class SetTaskTrue extends AppEvent {
+  final int id;
+  SetTaskTrue(this.id);
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [id];
+}
+
